@@ -1,0 +1,50 @@
+---
+title: "Data & methods"
+---
+
+## Data source
+
+This project uses public individual-level files from the **2017–2018 National
+Health and Nutrition Examination Survey (NHANES)**, conducted by the U.S.
+National Center for Health Statistics:
+
+- [NHANES 2017–2018 survey documentation](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2017)
+- [Physical Activity Questionnaire (PAQ_J)](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/PAQ_J.htm)
+- [Depression Screener (DPQ_J)](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/DPQ_J.htm)
+- [Demographics (DEMO_J)](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/DEMO_J.htm)
+
+The source files used for this reproducible site are included in the
+[`data/`](data/) folder. Respondents are linked across files using the
+NHANES sequence number (`SEQN`).
+
+## Measures
+
+- **Depressive symptoms:** The nine DPQ items are added to form a PHQ-9 score
+  from 0 to 27. The score is a screening measure, not a diagnosis. Records
+  missing any of the nine answers are excluded from the plots.
+- **Recreational activity:** Minutes per week are calculated as reported
+  minutes per day multiplied by reported days per week for vigorous and
+  moderate recreational activities, then summed. A reported “no” is counted
+  as zero for that activity; refused, unknown, and incomplete responses are
+  treated as missing. Work and transportation activity are not included.
+- **Demographic panels:** The charts use the male/female categories recorded
+  in the NHANES `RIAGENDR` field. They do not represent every aspect of sex or
+  gender.
+- **Included sample:** Adults with complete depression, activity, and
+  demographic values are included. The homepage reports the resulting count
+  directly from the analysis code.
+
+## Important limitations
+
+The figures are descriptive and use complete cases without applying NHANES
+survey weights. They should not be read as official population estimates.
+The survey is observational and these plots do not show that activity causes
+changes in depressive symptoms. The leisure-time activity measure is only one
+part of physical activity, and other factors may be associated with both
+activity and mood.
+
+The original proposal considered NCAA athletes and wrestling. The NCAA study
+page reports about 23,000 participants, but the individual-level records needed
+to plot thousands of actual responses were not available here. This website
+therefore uses a public dataset that does support a real observation-level
+graphic; its results are about U.S. adults, not student-athletes.

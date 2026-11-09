@@ -1,0 +1,181 @@
+---
+title: "Physical Activity & Depressive Symptoms"
+subtitle: "A look at more than 5,000 U.S. adults in NHANES 2017–2018"
+format:
+  html:
+    page-layout: article
+---
+
+## The question
+
+How do recreational physical activity and depressive-symptom scores vary
+together among adults? Each dot below represents one NHANES participant with
+complete responses to the measures used here. The data are from a public
+national health survey—not from college athletes—so this is a new topic, not a
+claim about wrestlers or athletic performance.
+
+```{r}
+#| label: setup
+#| include: false
+
+library(dplyr)
+library(ggplot2)
+library(haven)
+
+demo <- read_xpt("data/DEMO_J.XPT")
+activity <- read_xpt("data/PAQ_J.XPT")
+depression <- read_xpt("data/DPQ_J.XPT")
+
+phq_items <- paste0("DPQ", sprintf("%03d", seq(10, 90, by = 10)))
+
+minutes_per_week <- function(answer, days, minutes) {
+  answer <- as.numeric(answer)
+  days <- as.numeric(days)
+  minutes <- as.numeric(minutes)
+
+  answer[answer %in% c(7, 9)] <- NA_real_
+  days[days %in% c(77, 99)] <- NA_real_
+  minutes[minutes %in% c(7777, 9999)] <- NA_real_
+
+  dplyr::case_when(
+    answer == 2 ~ 0,
+    answer == 1 & !is.na(days) & !is.na(minutes) & minutes <= 1440 ~ days * minutes,
+    TRUE ~ NA_real_
+  )
+}
+
+plot_data <- demo |>
+  inner_join(activity, by = "SEQN") |>
+  inner_join(depression, by = "SEQN") |>
+  filter(RIDAGEYR >= 18) |>
+  mutate(
+    across(all_of(phq_items), \(x) {
+      x <- as.numeric(x)
+      replace(x, x %in% c(7, 9), NA_real_)
+    }),
+    phq9 = rowSums(across(all_of(phq_items)), na.rm = FALSE),
+    vigorous_minutes = minutes_per_week(PAQ650, PAQ655, PAD660),
+    moderate_minutes = minutes_per_week(PAQ665, PAQ670, PAD675),
+    recreational_mvpa = vigorous_minutes + moderate_minutes,
+    sex = factor(RIAGENDR, levels = c(1, 2), labels = c("Male", "Female"))
+  ) |>
+  filter(complete.cases(phq9, recreational_mvpa, sex))
+
+stopifnot(nrow(plot_data) >= 2000)
+
+activity_groups <- plot_data |>
+  mutate(
+    activity_group = case_when(
+      recreational_mvpa == 0 ~ "0 minutes",
+      recreational_mvpa < 150 ~ "1–149 minutes",
+      recreational_mvpa < 300 ~ "150–299 minutes",
+      TRUE ~ "300+ minutes"
+    ),
+    activity_group = factor(
+      activity_group,
+      levels = c("0 minutes", "1–149 minutes", "150–299 minutes", "300+ minutes")
+    )
+  )
+
+group_counts <- activity_groups |>
+  count(activity_group) |>
+  mutate(activity_label = paste0(as.character(activity_group), "\n(n = ", n, ")"))
+
+activity_groups <- activity_groups |>
+  left_join(select(group_counts, activity_group, activity_label), by = "activity_group") |>
+  mutate(activity_group = factor(activity_label, levels = group_counts$activity_label)) |>
+  select(-activity_label)
+```
+
+The analysis includes **`r format(nrow(plot_data), big.mark = ",")` complete
+adult responses**. Each point is one respondent; the curves summarize the
+overall pattern within each sex category recorded in NHANES.
+
+## Activity and symptom scores
+
+The x-axis uses a square-root scale to make both zero and high activity values
+visible. Vertical jitter separates overlapping scores; it does not change the
+underlying scores. PHQ-9 scores range from 0 to 27, with higher scores
+indicating more frequent depressive symptoms during the questionnaire's
+reference period.
+
+```{r}
+#| label: fig-activity-symptoms
+#| fig-cap: "Each point is a complete adult NHANES response. Smooth curves are descriptive; they do not establish cause and effect."
+#| fig-width: 10
+#| fig-height: 6
+
+ggplot(plot_data, aes(x = recreational_mvpa, y = phq9, color = sex)) +
+  geom_point(
+    alpha = 0.18,
+    size = 0.9,
+    position = position_jitter(width = 0, height = 0.12)
+  ) +
+  geom_smooth(method = "loess", formula = y ~ x, se = TRUE, linewidth = 1.1) +
+  facet_wrap(vars(sex), ncol = 1) +
+  scale_x_continuous(
+    trans = "sqrt",
+    breaks = c(0, 30, 60, 150, 300, 600, 1200, 2400),
+    labels = scales::label_number()
+  ) +
+  scale_y_continuous(breaks = seq(0, 27, by = 3), limits = c(0, 27)) +
+  scale_color_manual(values = c("Male" = "#007C91", "Female" = "#B34E7A")) +
+  labs(
+    x = "Moderate + vigorous recreational activity (minutes per week)",
+    y = "PHQ-9 depressive-symptom score",
+    color = "NHANES sex category",
+    caption = "Activity includes recreation only; work and transportation activity are not included."
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12),
+    panel.grid.minor = element_blank(),
+    plot.caption = element_text(hjust = 0)
+  )
+```
+
+## Symptom-score distributions across activity groups
+
+This second view compares the spread of scores across descriptive activity
+groups. The violins show the distribution shape, boxplots show the median and
+middle half, and faint points retain the individual observations. The
+150-minute cutpoint is a plotting bin, not a claim that this leisure-only
+measure is equivalent to a physical-activity guideline.
+
+```{r}
+#| label: fig-score-distributions
+#| fig-cap: "Individual complete responses and score distributions by weekly recreational activity group."
+#| fig-width: 10
+#| fig-height: 5.5
+
+ggplot(activity_groups, aes(x = activity_group, y = phq9, fill = activity_group)) +
+  geom_violin(trim = TRUE, alpha = 0.65, color = NA) +
+  geom_boxplot(width = 0.16, outlier.shape = NA, alpha = 0.75) +
+  geom_point(
+    color = "#243746",
+    alpha = 0.12,
+    size = 0.7,
+    position = position_jitter(width = 0.12, height = 0.12)
+  ) +
+  scale_fill_manual(values = c("#8CB4B8", "#5A9B9F", "#277B85", "#155B67")) +
+  scale_y_continuous(breaks = seq(0, 27, by = 3), limits = c(0, 27)) +
+  labs(
+    x = "Moderate + vigorous recreational activity per week",
+    y = "PHQ-9 depressive-symptom score",
+    title = "The score distributions overlap across activity groups",
+    caption = "Group sample sizes appear below each label; all plotted points are individual respondents."
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(face = "bold"),
+    plot.caption = element_text(hjust = 0)
+  )
+```
+
+These are exploratory, unweighted comparisons of survey responses. Activity
+and mood may be related in complicated ways, and the plots cannot establish
+that one causes the other. See [Data & methods](methods.qmd) for the source,
+scoring choices, and limitations.

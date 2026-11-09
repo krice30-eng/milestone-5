@@ -1,0 +1,88 @@
+---
+title: "Mental and Emotional Well-Being in College Athletes"
+subtitle: "Final project proposal"
+format:
+  html:
+    toc: true
+    number-sections: true
+---
+
+## Project overview
+
+For my final project, I found the NCAA Student-Athlete Health and Wellness
+Study, which surveyed approximately 23,000 college athletes during the
+2022–2023 academic year. The study covers topics such as mental health, stress,
+sleep, nutrition, and overall well-being. This dataset relates to my topic
+because I want to understand how mental and emotional challenges affect
+athletes and how these challenges may relate to their performance. I could use
+this information to explore the psychological challenges athletes face and how
+the findings might apply to wrestlers. The study meets the requirement for
+thousands of observations, but I would need to confirm access to the
+individual-level data and its variables before using it for my final project.
+
+**Dataset URL:** [NCAA Student-Athlete Health and Wellness
+Study](https://www.ncaa.org/what-we-do/research/studies/student-athlete-health-and-wellness-study/)
+
+## Research questions
+
+1. What patterns of mental health, stress, sleep, nutrition, and overall
+   well-being appear in the available survey data?
+2. How are the available well-being measures associated with one another?
+3. If sport is recorded and the wrestler sample is large enough, how do
+   wrestlers' responses compare with those of athletes in other sports?
+4. Does the dataset include a clearly defined performance measure that can be
+   compared with well-being? This question can only be answered if such a
+   measure is available.
+
+## Planned plots
+
+These are plot designs, not results. I will confirm the survey's actual
+variables, response scales, and sample sizes before creating the plots. I will
+not infer values from the study description or make up participant data.
+
+### 1. Faceted response distributions
+
+Use a faceted, 100% stacked bar chart to compare response distributions across
+available mental-health, stress, sleep, nutrition, and well-being questions.
+Facet panels by question or topic, and use consistent response ordering so the
+patterns are easy to compare. If the data include sport and suitable sample
+sizes, show wrestlers and other athletes separately.
+
+### 2. Well-being association heatmap
+
+Use a heatmap to summarize pairwise associations among well-being measures
+that are appropriate to compare. Label each measure clearly and display the
+association strength with a diverging color scale. The association statistic
+will depend on the variables' actual types and survey scales; association will
+not be described as causation.
+
+### 3. Sleep and stress relationship
+
+If sleep and stress are measured in a form that supports this comparison, plot
+their relationship with a smooth trend and uncertainty band. Use points or
+density contours to show where observations cluster, and facet by sport or
+another relevant subgroup only when those variables are available and group
+sizes are adequate.
+
+### 4. Wrestler comparison with uncertainty
+
+If sport is recorded and the wrestler sample is large enough, use a forest plot
+to compare wrestlers with athletes in other sports on selected well-being
+measures. Show group estimates with confidence intervals and the number of
+observations behind each estimate. Avoid displaying small groups in a way that
+could identify individuals.
+
+## Data checks and limitations
+
+Before analysis, I need to confirm that individual-level data are accessible,
+review the data dictionary and survey wording, and identify how missing
+responses and survey weights should be handled. I also need to check whether
+sport is recorded and whether there are enough wrestler responses for a
+meaningful comparison.
+
+The study description alone does not establish that the dataset contains
+athletic performance measures. If no suitable performance variable is
+available, this project can describe well-being patterns and associations but
+cannot test how mental or emotional challenges relate to performance.
+Comparisons in survey responses would describe associations, not prove that
+one factor causes another.

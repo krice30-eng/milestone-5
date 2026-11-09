@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - methods.qmd
+
+website:
+  title: "Movement & Mood"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: methods.qmd
+        text: Data & methods
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true

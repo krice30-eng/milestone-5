@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "methods.html",
+    "href": "methods.html",
+    "title": "Data & methods",
+    "section": "",
+    "text": "This project uses public individual-level files from the 2017–2018 National Health and Nutrition Examination Survey (NHANES), conducted by the U.S. National Center for Health Statistics:\n\nNHANES 2017–2018 survey documentation\nPhysical Activity Questionnaire (PAQ_J)\nDepression Screener (DPQ_J)\nDemographics (DEMO_J)\n\nThe source files used for this reproducible site are included in the data/ folder. Respondents are linked across files using the NHANES sequence number (SEQN)."
+  },
+  {
+    "objectID": "methods.html#data-source",
+    "href": "methods.html#data-source",
+    "title": "Data & methods",
+    "section": "",
+    "text": "This project uses public individual-level files from the 2017–2018 National Health and Nutrition Examination Survey (NHANES), conducted by the U.S. National Center for Health Statistics:\n\nNHANES 2017–2018 survey documentation\nPhysical Activity Questionnaire (PAQ_J)\nDepression Screener (DPQ_J)\nDemographics (DEMO_J)\n\nThe source files used for this reproducible site are included in the data/ folder. Respondents are linked across files using the NHANES sequence number (SEQN)."
+  },
+  {
+    "objectID": "methods.html#measures",
+    "href": "methods.html#measures",
+    "title": "Data & methods",
+    "section": "Measures",
+    "text": "Measures\n\nDepressive symptoms: The nine DPQ items are added to form a PHQ-9 score from 0 to 27. The score is a screening measure, not a diagnosis. Records missing any of the nine answers are excluded from the plots.\nRecreational activity: Minutes per week are calculated as reported minutes per day multiplied by reported days per week for vigorous and moderate recreational activities, then summed. A reported “no” is counted as zero for that activity; refused, unknown, and incomplete responses are treated as missing. Work and transportation activity are not included.\nDemographic panels: The charts use the male/female categories recorded in the NHANES RIAGENDR field. They do not represent every aspect of sex or gender.\nIncluded sample: Adults with complete depression, activity, and demographic values are included. The homepage reports the resulting count directly from the analysis code."
+  },
+  {
+    "objectID": "methods.html#important-limitations",
+    "href": "methods.html#important-limitations",
+    "title": "Data & methods",
+    "section": "Important limitations",
+    "text": "Important limitations\nThe figures are descriptive and use complete cases without applying NHANES survey weights. They should not be read as official population estimates. The survey is observational and these plots do not show that activity causes changes in depressive symptoms. The leisure-time activity measure is only one part of physical activity, and other factors may be associated with both activity and mood.\nThe original proposal considered NCAA athletes and wrestling. The NCAA study page reports about 23,000 participants, but the individual-level records needed to plot thousands of actual responses were not available here. This website therefore uses a public dataset that does support a real observation-level graphic; its results are about U.S. adults, not student-athletes."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Physical Activity & Depressive Symptoms",
+    "section": "",
+    "text": "How do recreational physical activity and depressive-symptom scores vary together among adults? Each dot below represents one NHANES participant with complete responses to the measures used here. The data are from a public national health survey—not from college athletes—so this is a new topic, not a claim about wrestlers or athletic performance.\nThe analysis includes 5,060 complete adult responses. Each point is one respondent; the curves summarize the overall pattern within each sex category recorded in NHANES."
+  },
+  {
+    "objectID": "index.html#the-question",
+    "href": "index.html#the-question",
+    "title": "Physical Activity & Depressive Symptoms",
+    "section": "",
+    "text": "How do recreational physical activity and depressive-symptom scores vary together among adults? Each dot below represents one NHANES participant with complete responses to the measures used here. The data are from a public national health survey—not from college athletes—so this is a new topic, not a claim about wrestlers or athletic performance.\nThe analysis includes 5,060 complete adult responses. Each point is one respondent; the curves summarize the overall pattern within each sex category recorded in NHANES."
+  },
+  {
+    "objectID": "index.html#activity-and-symptom-scores",
+    "href": "index.html#activity-and-symptom-scores",
+    "title": "Physical Activity & Depressive Symptoms",
+    "section": "Activity and symptom scores",
+    "text": "Activity and symptom scores\nThe x-axis uses a square-root scale to make both zero and high activity values visible. Vertical jitter separates overlapping scores; it does not change the underlying scores. PHQ-9 scores range from 0 to 27, with higher scores indicating more frequent depressive symptoms during the questionnaire’s reference period.\n\n\nCode\nggplot(plot_data, aes(x = recreational_mvpa, y = phq9, color = sex)) +\n  geom_point(\n    alpha = 0.18,\n    size = 0.9,\n    position = position_jitter(width = 0, height = 0.12)\n  ) +\n  geom_smooth(method = \"loess\", formula = y ~ x, se = TRUE, linewidth = 1.1) +\n  facet_wrap(vars(sex), ncol = 1) +\n  scale_x_continuous(\n    trans = \"sqrt\",\n    breaks = c(0, 30, 60, 150, 300, 600, 1200, 2400),\n    labels = scales::label_number()\n  ) +\n  scale_y_continuous(breaks = seq(0, 27, by = 3), limits = c(0, 27)) +\n  scale_color_manual(values = c(\"Male\" = \"#007C91\", \"Female\" = \"#B34E7A\")) +\n  labs(\n    x = \"Moderate + vigorous recreational activity (minutes per week)\",\n    y = \"PHQ-9 depressive-symptom score\",\n    color = \"NHANES sex category\",\n    caption = \"Activity includes recreation only; work and transportation activity are not included.\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(\n    legend.position = \"none\",\n    strip.text = element_text(face = \"bold\", size = 12),\n    panel.grid.minor = element_blank(),\n    plot.caption = element_text(hjust = 0)\n  )\n\n\nWarning: Removed 863 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\nFigure 1: Each point is a complete adult NHANES response. Smooth curves are descriptive; they do not establish cause and effect."
+  },
+  {
+    "objectID": "index.html#symptom-score-distributions-across-activity-groups",
+    "href": "index.html#symptom-score-distributions-across-activity-groups",
+    "title": "Physical Activity & Depressive Symptoms",
+    "section": "Symptom-score distributions across activity groups",
+    "text": "Symptom-score distributions across activity groups\nThis second view compares the spread of scores across descriptive activity groups. The violins show the distribution shape, boxplots show the median and middle half, and faint points retain the individual observations. The 150-minute cutpoint is a plotting bin, not a claim that this leisure-only measure is equivalent to a physical-activity guideline.\n\n\nCode\nggplot(activity_groups, aes(x = activity_group, y = phq9, fill = activity_group)) +\n  geom_violin(trim = TRUE, alpha = 0.65, color = NA) +\n  geom_boxplot(width = 0.16, outlier.shape = NA, alpha = 0.75) +\n  geom_point(\n    color = \"#243746\",\n    alpha = 0.12,\n    size = 0.7,\n    position = position_jitter(width = 0.12, height = 0.12)\n  ) +\n  scale_fill_manual(values = c(\"#8CB4B8\", \"#5A9B9F\", \"#277B85\", \"#155B67\")) +\n  scale_y_continuous(breaks = seq(0, 27, by = 3), limits = c(0, 27)) +\n  labs(\n    x = \"Moderate + vigorous recreational activity per week\",\n    y = \"PHQ-9 depressive-symptom score\",\n    title = \"The score distributions overlap across activity groups\",\n    caption = \"Group sample sizes appear below each label; all plotted points are individual respondents.\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(\n    legend.position = \"none\",\n    panel.grid.minor = element_blank(),\n    axis.text.x = element_text(face = \"bold\"),\n    plot.caption = element_text(hjust = 0)\n  )\n\n\nWarning: Removed 860 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\nFigure 2: Individual complete responses and score distributions by weekly recreational activity group.\n\n\n\n\n\nThese are exploratory, unweighted comparisons of survey responses. Activity and mood may be related in complicated ways, and the plots cannot establish that one causes the other. See Data & methods for the source, scoring choices, and limitations."
+  }
+]
